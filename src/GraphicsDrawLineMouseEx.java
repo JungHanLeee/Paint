@@ -5,47 +5,63 @@ import java.awt.event.*;
 
 public class GraphicsDrawLineMouseEx extends JFrame{
 	private MyPanel panel=new MyPanel();
-	
+	NorthPanel np=new NorthPanel();
 	public GraphicsDrawLineMouseEx() {
 		setTitle("draw Line by Mouse");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(panel);
-		
-		setSize(300,300);
+		Container c=getContentPane();
+		c.add(np,BorderLayout.NORTH);
+		setSize(800,800);
 		setVisible(true);
+	}
+	class NorthPanel extends JPanel{
+		public NorthPanel() {
+			ImageIcon[] images= {new ImageIcon("Pictures/blackIcon.png"),
+					new ImageIcon("Pictures/blueIcon.jpg"),
+					new ImageIcon("Pictures/redIcon.jpg")};
+			JButton[] menubar= {new JButton("Áö¿ì°³")};
+			JComboBox combo=new JComboBox(images);
+			JLabel imgLabel=new JLabel(images[0]);
+			setLayout(new FlowLayout(FlowLayout.LEFT));
+			combo.setPreferredSize(new Dimension(50,30));
+			add(combo); 
+			for(int i=0;i<menubar.length;i++) {
+				add(menubar[i]);
+			}
+			
+		}
+	}
+	
+	class MyPanel extends JPanel{
+		
+		public MyPanel() {
+			addMouseListener(new MouseAdapter() {
+				public void mousePressed(MouseEvent e) {
+					moveto(e.getX(),e.getY());
+					requestFocus();
+				}
+			});
+			addMouseMotionListener(new MouseMotionAdapter() {
+				public void mouseDragged(MouseEvent e) {
+					lineto(e.getX(),e.getY());
+				}
+			});
+		}
+		protected int last_x,last_y;
+		public void moveto(int x,int y) {
+			last_x=x;
+			last_y=y;
+		}
+		public void lineto(int x,int y) {
+			Graphics g=getGraphics();
+			g.drawLine(last_x, last_y, x, y);
+			moveto(x,y);
+		}
+		
 	}
 	public static void main(String[] args) {
 		new GraphicsDrawLineMouseEx();
 	}
-	class MyPanel extends JPanel{
-		private Vector<Point> vStart=new Vector<Point>();
-		private Vector<Point> vEnd=new Vector<Point>();
-	
-		public MyPanel() {
-			addMouseListener(new MouseAdapter() {
-				public void mousePressed(MouseEvent e) {
-					Point startP=e.getPoint();
-					vStart.add(startP);
-				}
-				public void mouseReleased(MouseEvent e) {
-					Point endP=e.getPoint();
-					vEnd.add(endP);
-					repaint();
-				}
-			});
-		}
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			g.setColor(Color.BLUE);
-			
-			for(int i=0;i<vStart.size();i++) {
-				Point s=vStart.elementAt(i);
-				Point e=vEnd.elementAt(i);
-				
-				g.drawLine((int)s.getX(), (int)s.getY(), (int)e.getX(),(int)e.getY());
-			}
-		}
-	}
-	
-
 }
+
