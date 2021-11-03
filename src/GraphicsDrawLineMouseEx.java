@@ -5,6 +5,11 @@ import java.awt.event.*;
 
 public class GraphicsDrawLineMouseEx extends JFrame{
 	private MyPanel panel=new MyPanel();
+	ImageIcon[] images= {new ImageIcon("Pictures/blackIcon.png"),
+			new ImageIcon("Pictures/blueIcon.jpg"),
+			new ImageIcon("Pictures/redIcon.jpg")};
+	JButton menubar= new JButton("지우개");
+	JComboBox combo=new JComboBox(images);
 	NorthPanel np=new NorthPanel();
 	public GraphicsDrawLineMouseEx() {
 		setTitle("draw Line by Mouse");
@@ -12,30 +17,29 @@ public class GraphicsDrawLineMouseEx extends JFrame{
 		setContentPane(panel);
 		Container c=getContentPane();
 		c.add(np,BorderLayout.NORTH);
+		panel.setBackground(Color.WHITE);
 		setSize(800,800);
 		setVisible(true);
 	}
 	class NorthPanel extends JPanel{
+		
+		JLabel imgLabel=new JLabel(images[0]);
 		public NorthPanel() {
-			ImageIcon[] images= {new ImageIcon("Pictures/blackIcon.png"),
-					new ImageIcon("Pictures/blueIcon.jpg"),
-					new ImageIcon("Pictures/redIcon.jpg")};
-			JButton[] menubar= {new JButton("지우개")};
-			JComboBox combo=new JComboBox(images);
-			JLabel imgLabel=new JLabel(images[0]);
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			combo.setPreferredSize(new Dimension(50,30));
 			add(combo); 
-			for(int i=0;i<menubar.length;i++) {
-				add(menubar[i]);
-			}
-			
+			add(menubar);
 		}
+		
+	}
+	public int getComboIndex() {	
+		return combo.getSelectedIndex();
 	}
 	
 	class MyPanel extends JPanel{
 		
 		public MyPanel() {
+			
 			addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent e) {
 					moveto(e.getX(),e.getY());
@@ -44,6 +48,7 @@ public class GraphicsDrawLineMouseEx extends JFrame{
 			});
 			addMouseMotionListener(new MouseMotionAdapter() {
 				public void mouseDragged(MouseEvent e) {
+					
 					lineto(e.getX(),e.getY());
 				}
 			});
@@ -55,13 +60,23 @@ public class GraphicsDrawLineMouseEx extends JFrame{
 		}
 		public void lineto(int x,int y) {
 			Graphics g=getGraphics();
+			 
+				switch(getComboIndex()) {
+				case 0:g.setColor(Color.BLACK); break;
+				case 1:g.setColor(Color.BLUE);	break;
+				case 2:g.setColor(Color.RED);	break;
+				}
+
+			
 			g.drawLine(last_x, last_y, x, y);
 			moveto(x,y);
 		}
-		
 	}
+	
 	public static void main(String[] args) {
 		new GraphicsDrawLineMouseEx();
 	}
+	
+	
 }
 
